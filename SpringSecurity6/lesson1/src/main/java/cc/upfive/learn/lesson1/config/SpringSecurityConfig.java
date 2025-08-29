@@ -37,6 +37,11 @@ public class SpringSecurityConfig {
                         .failureUrl("/login?error")
                         .permitAll()
                 )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll()
+                )
                 .httpBasic(Customizer.withDefaults())
                 .logout(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
