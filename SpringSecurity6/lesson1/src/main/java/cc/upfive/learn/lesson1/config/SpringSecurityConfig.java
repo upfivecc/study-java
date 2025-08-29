@@ -43,7 +43,6 @@ public class SpringSecurityConfig {
                         .permitAll()
                 )
                 .httpBasic(Customizer.withDefaults())
-                .logout(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
         ;
 
