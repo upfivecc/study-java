@@ -48,3 +48,4 @@ bin/
 ./out/
 target/
 
+*.env
