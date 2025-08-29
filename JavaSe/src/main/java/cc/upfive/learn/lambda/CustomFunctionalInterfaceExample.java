@@ -8,6 +8,10 @@ interface StringProcessor {
     default void describe() {
         System.out.println("This is a string processor.");
     }
+
+    static StringProcessor withDefaults() {
+        return String::toUpperCase;
+    }
 }
 
 public class CustomFunctionalInterfaceExample {
