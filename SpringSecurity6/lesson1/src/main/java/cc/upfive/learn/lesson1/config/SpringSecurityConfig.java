@@ -6,6 +6,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -26,11 +27,19 @@ public class SpringSecurityConfig {
     @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/doLogin")
+                        .defaultSuccessUrl("/welcome", true)
+                        .failureUrl("/login?error")
+                        .permitAll()
+                )
                 .httpBasic(Customizer.withDefaults())
                 .logout(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
         ;
 
         return http.build();

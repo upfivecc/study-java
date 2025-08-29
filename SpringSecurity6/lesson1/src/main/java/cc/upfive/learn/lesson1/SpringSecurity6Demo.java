@@ -9,8 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date: 2025/8/20 16:29
  */
 @SpringBootApplication
-public class SpringSecurity6Demo1 {
+public class SpringSecurity6Demo {
     public static void main(String[] args) {
-        SpringApplication.run(SpringSecurity6Demo1.class, args);
+        SpringApplication.run(SpringSecurity6Demo.class, args);
     }
 }
