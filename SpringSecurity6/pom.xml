@@ -11,6 +11,7 @@
     <url>http://maven.apache.org</url>
     <modules>
         <module>lesson1</module>
+        <module>lesson2</module>
     </modules>
 
     <properties>
