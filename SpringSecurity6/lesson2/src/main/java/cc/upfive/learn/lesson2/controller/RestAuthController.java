@@ -1,22 +1,15 @@
 package cc.upfive.learn.lesson2.controller;
 
+import cc.upfive.learn.lesson2.util.JwtTokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwsHeader;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 /**
@@ -29,11 +22,11 @@ import java.util.Map;
 public class RestAuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtEncoder jwtEncoder;
+    private final JwtTokenService jwtTokenService;
 
-    public RestAuthController(AuthenticationManager authenticationManager, JwtEncoder jwtEncoder) {
+    public RestAuthController(AuthenticationManager authenticationManager, JwtTokenService jwtTokenService) {
         this.authenticationManager = authenticationManager;
-        this.jwtEncoder = jwtEncoder;
+        this.jwtTokenService = jwtTokenService;
     }
 
 
@@ -48,20 +41,7 @@ public class RestAuthController {
         );
 
         // 生成 JWT
-        Instant now = Instant.now();
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.HOURS)) // 1 小时过期
-                .subject(authentication.getName())
-                .claim("roles", authentication.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .toList())
-                .build();
-
-        JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
-        String token = this.jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
-
+        String token = jwtTokenService.generateToken(authentication);
         return ResponseEntity.ok(Map.of("token", token));
     }
 
