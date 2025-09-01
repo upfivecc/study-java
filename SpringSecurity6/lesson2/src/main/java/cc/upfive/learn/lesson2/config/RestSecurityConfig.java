@@ -39,7 +39,9 @@ public class RestSecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // 假设使用 JWT 作为资源服务器
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+
+        ;
 
         return http.build();
     }
