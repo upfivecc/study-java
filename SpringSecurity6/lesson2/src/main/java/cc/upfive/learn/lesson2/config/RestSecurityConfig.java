@@ -1,11 +1,9 @@
 package cc.upfive.learn.lesson2.config;
 
 import cc.upfive.learn.lesson2.util.JwtTokenService;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -51,7 +49,6 @@ public class RestSecurityConfig {
                 //.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 // 方法二： 自定义拦截器
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenService), UsernamePasswordAuthenticationFilter.class)
-                //.addFilterAt(new JwtAuthenticationFilter(jwtTokenService), UsernamePasswordAuthenticationFilter.class)
 
         ;
 
