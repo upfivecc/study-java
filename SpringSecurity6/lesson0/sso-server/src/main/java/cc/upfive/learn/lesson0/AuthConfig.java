@@ -44,7 +44,7 @@ public class AuthConfig {
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfigurer oAuth2AuthorizationServerConfigurer = OAuth2AuthorizationServerConfigurer.authorizationServer();
-        //oAuth2AuthorizationServerConfigurer.authorizationEndpoint(authorization ->  authorization.consentPage("/consent"));
+        oAuth2AuthorizationServerConfigurer.authorizationEndpoint(authorization ->  authorization.consentPage("/oauth2/consent"));
         http.securityMatcher(oAuth2AuthorizationServerConfigurer.getEndpointsMatcher());
         http.with(oAuth2AuthorizationServerConfigurer, authorizationServer -> authorizationServer.oidc(Customizer.withDefaults()));
 
