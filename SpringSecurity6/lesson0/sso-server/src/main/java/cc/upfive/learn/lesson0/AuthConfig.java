@@ -54,7 +54,6 @@ public class AuthConfig {
                         .requestMatchers("/oauth2/login").permitAll()
                         .anyRequest().authenticated()
                 )
-                //.oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))
                 .formLogin(form -> form
                         .loginPage("/oauth2/login").permitAll()
                 )
