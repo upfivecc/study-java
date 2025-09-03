@@ -16,8 +16,13 @@ public class AuthController {
         return "home";
     }
 
-    @GetMapping("/oauth2/login")
+    @GetMapping("/login")
     public String login() {
+        return "login";
+    }
+
+    @GetMapping("/oauth2/login")
+    public String oauth2Login() {
         return "oauth2/login";
     }
 

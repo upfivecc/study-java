@@ -78,20 +78,16 @@ public class AuthConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")  // 自定义登录页
-                        .successHandler((request, response, authentication) -> {
-                            // 判断是不是 OAuth2 授权请求触发的登录
-                            DefaultSavedRequest savedRequest = (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
-                            if (savedRequest != null) {
-                                // 让 Spring Authorization Server 继续处理
-                                response.sendRedirect(savedRequest.getRedirectUrl());
-                            } else {
-                                // 普通表单登录成功后的逻辑
-                                response.sendRedirect("/home");
-                            }
-                        })
+                        // 自定义登录页
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home")
                         .failureUrl("/login?error")
-                );
+                )
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login")
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+        ;
         return http.build();
     }
 
