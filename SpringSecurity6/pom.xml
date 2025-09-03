@@ -10,8 +10,10 @@
     <name>SpringSecurity6</name>
     <url>http://maven.apache.org</url>
     <modules>
+        <module>lesson0</module>
         <module>lesson1</module>
         <module>lesson2</module>
+
     </modules>
 
     <properties>

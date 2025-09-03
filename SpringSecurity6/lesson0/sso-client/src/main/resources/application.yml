@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          demo-client:
+            client-id: client
+            client-secret: 123456
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid,profile
+        provider:
+          demo-client:
+            authorization-uri: http://127.0.0.1:9002/oauth2/authorize
+            token-uri: http://127.0.0.1:9002/oauth2/token
+            user-info-uri: http://127.0.0.1:9002/userinfo
+            user-name-attribute: sub
+            jwk-set-uri: http://127.0.0.1:9002/oauth2/jwks
