@@ -20,7 +20,6 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 
 import java.util.UUID;
@@ -33,24 +32,45 @@ import java.util.UUID;
 @Configuration
 @EnableWebSecurity
 public class AuthConfig {
+
+    /**
+     * 高优先级，优先匹配授权服务器端点
+     *
+     * @param http
+     * @return
+     * @throws Exception
+     */
     @Bean
-    @Order(1) // 高优先级，优先匹配授权服务器端点
+    @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfigurer oAuth2AuthorizationServerConfigurer = OAuth2AuthorizationServerConfigurer.authorizationServer();
+        //oAuth2AuthorizationServerConfigurer.authorizationEndpoint(authorization ->  authorization.consentPage("/consent"));
         http.securityMatcher(oAuth2AuthorizationServerConfigurer.getEndpointsMatcher());
         http.with(oAuth2AuthorizationServerConfigurer, authorizationServer -> authorizationServer.oidc(Customizer.withDefaults()));
 
-        http.authorizeHttpRequests(auth -> auth
+        http
+                .securityMatcher("/oauth2/**", "/userinfo")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/oauth2/login").permitAll()
                         .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))
-                .formLogin(Customizer.withDefaults())
+                //.oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))
+                .formLogin(form -> form
+                        .loginPage("/oauth2/login").permitAll()
+                )
                 .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 
+    /**
+     * 低优先级，处理其他所有请求
+     *
+     * @param http
+     * @return
+     * @throws Exception
+     */
     @Bean
-    @Order(2) // 低优先级，处理其他所有请求
+    @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
@@ -83,7 +103,6 @@ public class AuthConfig {
                 .build();
         return new InMemoryUserDetailsManager(user);
     }
-
 
     @Bean
     public RegisteredClientRepository registeredClientRepository() {

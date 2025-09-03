@@ -14,14 +14,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/index", "/login/oauth2/code/**").permitAll()
-                .anyRequest().authenticated()
-            )
-//            .oauth2Login(oauth2 -> oauth2
-//                .loginPage("/oauth2/authorization/demo-client") // 跳转授权服务器
-//            )
-                .oauth2Login(Customizer.withDefaults())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/login/oauth2/code/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        // 登录页面
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/user", true)
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                )
         ;
         return http.build();
     }

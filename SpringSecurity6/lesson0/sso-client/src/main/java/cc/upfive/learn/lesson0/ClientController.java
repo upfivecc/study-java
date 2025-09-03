@@ -9,9 +9,16 @@ import org.springframework.ui.Model;
 @Controller
 public class ClientController {
 
-    @GetMapping("/")
+    @GetMapping("/index")
     public String index() {
-        return "index"; // 未登录首页
+        // 首页
+        return "index";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        // 未登录页
+        return "login";
     }
 
     @GetMapping("/user")
