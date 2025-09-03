@@ -4,7 +4,7 @@
     <title>客户端首页</title>
 </head>
 <body>
-<h2>这是客户端首页</h2>
+<h2>当前登录用户：<span th:text="${user.name}"></span></h2>
 <a href="/oauth2/authorization/demo-client">使用授权服务器登录</a>
 </body>
 </html>

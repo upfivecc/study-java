@@ -16,6 +16,7 @@ public class ClientController {
 
     @GetMapping("/user")
     public String user(Model model, @AuthenticationPrincipal OidcUser oidcUser) {
+        System.out.println(oidcUser);
         model.addAttribute("user", oidcUser);
         return "user"; // 登录后展示用户信息
     }
