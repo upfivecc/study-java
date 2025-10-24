@@ -19,3 +19,7 @@ spring:
             user-info-uri: http://127.0.0.1:9002/userinfo
             user-name-attribute: sub
             jwk-set-uri: http://127.0.0.1:9002/oauth2/jwks
+
+logging:
+  level:
+    org.springframework.security: DEBUG
