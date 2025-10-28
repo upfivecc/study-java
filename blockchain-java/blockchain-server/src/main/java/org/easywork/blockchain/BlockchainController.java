@@ -64,7 +64,7 @@ public class BlockchainController {
         tx.signTransaction(minerWallet);
 
         // 这里只是演示，实际应从公钥反序列化
-        boolean added = blockchain.addTransaction(tx, minerWallet.getPublicKey());
+        boolean added = blockchain.createTransaction(tx, minerWallet.getPublicKey());
         return Map.of("success", added);
     }
 

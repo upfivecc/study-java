@@ -13,7 +13,7 @@ public class TransactionRequest {
     public boolean validate() {
         return senderBlockchainAddress != null &&
                recipientBlockchainAddress != null &&
-               senderPublicKey != null &&
+//               senderPublicKey != null &&
                value != null
                /*signature != null*/;
     }

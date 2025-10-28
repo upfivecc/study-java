@@ -7,10 +7,7 @@ import lombok.Data;
 import org.apache.logging.log4j.util.Strings;
 
 import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @Data
 public class Blockchain {
@@ -44,6 +41,25 @@ public class Blockchain {
         System.out.println("Created block: " + block.hash());
     }
 
+    public boolean createTransaction(Transaction tx, PublicKey senderPublicKey) {
+        boolean isAdded = addTransaction(tx, senderPublicKey);
+        if (isAdded) {
+            for (String neighbor : this.neighbors) {
+                String endpoint = String.format("http://%s/blockchain/addTransaction", neighbor);
+                TransactionRequest txRequest = new TransactionRequest();
+                txRequest.setSenderBlockchainAddress(tx.getSender());
+                txRequest.setRecipientBlockchainAddress(tx.getRecipient());
+                txRequest.setValue(tx.getValue());
+                if (null != senderPublicKey) {
+                    txRequest.setSenderPublicKey(Base64.getEncoder().encodeToString(senderPublicKey.getEncoded()));
+                }
+                String res = HttpUtil.post(endpoint, JSONUtil.toJsonStr(txRequest));
+                System.out.println("Transaction sync:" + neighbor + ", result: " + res);
+            }
+        }
+        return true;
+    }
+
     public boolean addTransaction(Transaction tx, PublicKey senderPublicKey) {
         if (tx.getSender().equals("BLOCKCHAIN")) {
             transactionPool.add(tx);
@@ -57,7 +73,7 @@ public class Blockchain {
 
         float senderBalance = calculateBalance(tx.getSender());
         if (senderBalance < tx.getValue()) {
-            System.err.println("💣 Insufficient balance");
+            System.err.println("Insufficient balance");
             return false;
         }
 
@@ -101,7 +117,7 @@ public class Blockchain {
 
     public void mine() {
         // 挖矿奖励
-        addTransaction(new Transaction("BLOCKCHAIN", blockchainAddress, MINING_REWARD), null);
+        createTransaction(new Transaction("BLOCKCHAIN", blockchainAddress, MINING_REWARD), null);
         int nonce = proofOfWork();
         createBlock(nonce, lastBlock().hash());
         System.out.println("⛏️ Mining complete!");
