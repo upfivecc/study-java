@@ -2,7 +2,7 @@ package org.easywork.blockchain;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,6 +18,7 @@ public class BlockchainController {
 
     private final Wallet minerWallet;
     private final Miner miner;
+    private final Map<String, Blockchain> cache = new HashMap<>();
 
     public BlockchainController() {
         // 初始化节点钱包 & 区块链
@@ -31,9 +32,9 @@ public class BlockchainController {
      *
      * @return
      */
-    @GetMapping("/chain")
-    public List<Block> getChain() {
-        return blockchain.getChain();
+    @GetMapping("/getBlockchain")
+    public Blockchain getBlockChain() {
+        return blockchain;
     }
 
     /**
@@ -66,7 +67,7 @@ public class BlockchainController {
                 txRequest.getRecipientBlockchainAddress(),
                 txRequest.getValue()
         );
-        tx.setSignature(txRequest.getSignature());
+        tx.signTransaction(minerWallet);
 
         // 这里只是演示，实际应从公钥反序列化
         boolean added = blockchain.addTransaction(tx, minerWallet.getPublicKey());

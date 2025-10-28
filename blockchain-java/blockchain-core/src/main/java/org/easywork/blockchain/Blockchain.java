@@ -31,7 +31,7 @@ public class Blockchain {
         Block block = new Block(nonce, previousHash, new ArrayList<>(transactionPool));
         chain.add(block);
         transactionPool.clear();
-        System.out.println("✅ Created block: " + block.hash());
+        System.out.println("Created block: " + block.hash());
     }
 
     public boolean addTransaction(Transaction tx, PublicKey senderPublicKey) {
@@ -41,18 +41,18 @@ public class Blockchain {
         }
 
         if (!tx.isValid(senderPublicKey)) {
-            System.out.println("❌ Invalid transaction signature");
+            System.err.println("Invalid transaction signature");
             return false;
         }
 
         float senderBalance = calculateBalance(tx.getSender());
         if (senderBalance < tx.getValue()) {
-            System.out.println("💣 Insufficient balance");
+            System.err.println("💣 Insufficient balance");
             return false;
         }
 
         transactionPool.add(tx);
-        System.out.println("✅ Transaction accepted");
+        System.out.println("Transaction accepted");
         return true;
     }
 

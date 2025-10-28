@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BlockchainServer {
     public static void main(String[] args) {
-        String port = args[0];
         SpringApplication.run(BlockchainServer.class, args);
     }
 }
