@@ -136,7 +136,7 @@ public class Blockchain {
         }, 0, 20_000);
     }
 
-    public void resolveConflict() {
+    public void resolveConflicts() {
         int maxLength = this.chain.size();
         for (String neighbor : this.neighbors) {
             String endpoint = String.format("http://%s/chain", neighbor);
@@ -163,7 +163,7 @@ public class Blockchain {
     @PostConstruct
     public void run() {
         this.startSyncNeighbors();
-        this.resolveConflict();
+        this.resolveConflicts();
         this.startMining();
     }
 

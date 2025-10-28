@@ -3,6 +3,7 @@ package org.easywork.blockchain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
 import java.util.Map;
 
 /**
@@ -23,8 +24,10 @@ public class WalletController {
      * @return
      */
     @GetMapping("/newWallet")
-    public Wallet newWallet() {
-        return new Wallet();
+    public Map<String, Object> newWallet() {
+        Wallet wallet = new Wallet();
+        return Map.of("publicKey", Base64.getEncoder().encodeToString(wallet.getPublicKey().getEncoded()), "privateKey"
+                , Base64.getEncoder().encodeToString(wallet.getPrivateKey().getEncoded()), "address", wallet.getBlockchainAddress());
     }
 
     /**
@@ -34,7 +37,7 @@ public class WalletController {
      * @return
      */
     @GetMapping("/balance/{address}")
-    public Map<String, Object> getBalance(@PathVariable String address) {
+    public Map<String, Object> getBalance(@PathVariable(name = "address") String address) {
         return blockchain.calculateBalance(address);
     }
 

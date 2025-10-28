@@ -22,10 +22,10 @@ public class BlockchainProxy {
     private RestTemplate restTemplate;
 
     public Map<String, Object> calculateBalance(String address) {
-        return restTemplate.postForObject(gateway + "/calculateBalance", address, Map.class);
+        return restTemplate.getForObject(gateway + "/blockchain/calculateBalance/" + address, Map.class);
     }
 
     public Map<String, Object> addTransaction(TransactionRequest txRequest) {
-        return restTemplate.postForObject(gateway + "/addTransaction", txRequest, Map.class);
+        return restTemplate.postForObject(gateway + "/blockchain/addTransaction", txRequest, Map.class);
     }
 }

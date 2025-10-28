@@ -14,6 +14,7 @@ public class Wallet {
     public Wallet() {
         generateKeyPair();
         blockchainAddress = Utils.generateBlockchainAddress(publicKey);
+        print();
     }
 
     private void generateKeyPair() {
@@ -53,7 +54,8 @@ public class Wallet {
     }
 
     public void print() {
-        System.out.println("📬 Wallet Address: " + blockchainAddress);
-        System.out.println("🔑 Public Key: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()));
+        System.err.println("Wallet Address: " + blockchainAddress);
+        System.err.println("Public Key: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()));
+        System.err.println("Private Key: " + Base64.getEncoder().encodeToString(privateKey.getEncoded()));
     }
 }

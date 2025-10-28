@@ -37,7 +37,7 @@ public class BlockchainController {
      * @return
      */
     @GetMapping("/calculateBalance/{address}")
-    public Map<String, Object> calculateBalance(@PathVariable String address) {
+    public Map<String, Object> calculateBalance(@PathVariable(name = "address") String address) {
         float balance = blockchain.calculateBalance(address);
         return Map.of("balance", balance);
     }
