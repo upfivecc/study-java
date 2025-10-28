@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public class Utils {
 
     private static final Pattern IP_PATTERN = Pattern.compile("((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?\\.){3})(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
+    //private static final Pattern IP_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+\\.)(\\d+)");
 
     public static String sha256(String data) {
         try {
@@ -52,7 +53,7 @@ public class Utils {
 
     public static List<String> findNeighbors(String myHost, int myPort, int startIp, int endIp, int startPort, int endPort) {
         String myAddress = String.format("%s:%s", myHost, myPort);
-        Matcher matcher = IP_PATTERN.matcher(myAddress);
+        Matcher matcher = IP_PATTERN.matcher(myHost);
         if (!matcher.matches()) {
             return List.of();
         }
