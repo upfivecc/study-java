@@ -1,5 +1,6 @@
 package org.easywork.blockchain;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
  * @version: 1.0.0
  * @date: 2025/10/28 09:50
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/blockchain")
 public class BlockchainController {
@@ -17,15 +19,7 @@ public class BlockchainController {
     private final Blockchain blockchain;
 
     private final Wallet minerWallet;
-    private final Miner miner;
     private final Map<String, Blockchain> cache = new HashMap<>();
-
-    public BlockchainController() {
-        // 初始化节点钱包 & 区块链
-        this.minerWallet = new Wallet();
-        this.blockchain = new Blockchain(minerWallet.getBlockchainAddress());
-        this.miner = new Miner(blockchain);
-    }
 
     /**
      * 查看全链
@@ -92,7 +86,7 @@ public class BlockchainController {
      */
     @GetMapping("/startMine")
     public Map<String, Object> startMine() {
-        miner.startMining();
+        blockchain.startMining();
         return Map.of("status", "mining", "miner_address", minerWallet.getBlockchainAddress());
     }
 

@@ -1,23 +1,33 @@
 package org.easywork.blockchain;
 
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
+import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.apache.logging.log4j.util.Strings;
 
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 @Data
 public class Blockchain {
 
     private final List<Transaction> transactionPool = new ArrayList<>();
-    private final List<Block> chain = new ArrayList<>();
-    private final String blockchainAddress;
+    private List<Block> chain = new ArrayList<>();
+    private String blockchainAddress;
+
+    private int port;
+    private List<String> neighbors = new ArrayList<>();
 
     private static final int MINING_DIFFICULTY = 3;
     private static final float MINING_REWARD = 1.0f;
 
-    public Blockchain(String blockchainAddress) {
+    public Blockchain(String blockchainAddress, int port) {
         this.blockchainAddress = blockchainAddress;
+        this.port = port;
         // 创世区块
         Block genesis = new Block(0, "0", new ArrayList<>());
         chain.add(genesis);
@@ -72,9 +82,26 @@ public class Blockchain {
         return nonce;
     }
 
+    public boolean isValidChain(List<Block> chain) {
+        Block previousBlock = chain.get(0);
+        for (int currentIndex = 1; currentIndex < chain.size(); currentIndex++) {
+            Block block = chain.get(currentIndex);
+            if (!previousBlock.hash().equals(block.getPreviousHash())) {
+                return false;
+            }
+
+            if (!this.validProof(block.getNonce(), block.getPreviousHash(), block.getTransactions(), MINING_DIFFICULTY)) {
+                return false;
+            }
+
+            previousBlock = block;
+        }
+        return true;
+    }
+
     public void mine() {
         // 挖矿奖励
-        addTransaction(new Transaction("BLOCKCHAIN", blockchainAddress, MINING_REWARD),null);
+        addTransaction(new Transaction("BLOCKCHAIN", blockchainAddress, MINING_REWARD), null);
         int nonce = proofOfWork();
         createBlock(nonce, lastBlock().hash());
         System.out.println("⛏️ Mining complete!");
@@ -96,6 +123,48 @@ public class Blockchain {
             System.out.println("=========== Block " + i + " ===========");
             chain.get(i).print();
         }
+    }
+
+    public void startSyncNeighbors() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                neighbors = Utils.findNeighbors(Utils.getHost(), port, 0, 1, 5000, 5003);
+                System.out.println("Neighbors: " + neighbors);
+            }
+        }, 0, 20_000);
+    }
+
+    public void resolveConflict() {
+        int maxLength = this.chain.size();
+        for (String neighbor : this.neighbors) {
+            String endpoint = String.format("http://%s/chain", neighbor);
+            String res = HttpUtil.get(endpoint);
+            Blockchain blockchain = JSONUtil.toBean(res, Blockchain.class);
+            int size = blockchain.chain.size();
+            if (size > maxLength && this.isValidChain(blockchain.chain)) {
+                maxLength = size;
+                this.chain = blockchain.chain;
+            }
+        }
+    }
+
+    public void startMining() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mine();
+            }
+        }, 0, 20_000);
+    }
+
+    @PostConstruct
+    public void run() {
+        this.startSyncNeighbors();
+        this.resolveConflict();
+        this.startMining();
     }
 
 }

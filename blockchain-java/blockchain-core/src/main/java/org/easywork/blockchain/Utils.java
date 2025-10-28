@@ -50,7 +50,7 @@ public class Utils {
         }
     }
 
-    public List<String> findNeighbors(String myHost, int myPort, int startIp, int endIp, int startPort, int endPort) {
+    public static List<String> findNeighbors(String myHost, int myPort, int startIp, int endIp, int startPort, int endPort) {
         String myAddress = String.format("%s:%s", myHost, myPort);
         Matcher matcher = IP_PATTERN.matcher(myAddress);
         if (!matcher.matches()) {
@@ -83,7 +83,7 @@ public class Utils {
         return neighbors;
     }
 
-    private boolean isFoundHost(String guessHost, int port) {
+    private static boolean isFoundHost(String guessHost, int port) {
         try (Socket socket = new Socket()) {
             socket.connect(new InetSocketAddress(guessHost, port), 500);
             return true;

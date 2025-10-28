@@ -1,4 +1,8 @@
-package org.easywork.blockchain;
+package org.easywork;
+
+import org.easywork.blockchain.Blockchain;
+import org.easywork.blockchain.Transaction;
+import org.easywork.blockchain.Wallet;
 
 public class BlockChainServer {
     public static void main(String[] args) {
@@ -8,7 +12,7 @@ public class BlockChainServer {
         alice.print();
         bob.print();
 
-        Blockchain blockchain = new Blockchain(alice.getBlockchainAddress());
+        Blockchain blockchain = new Blockchain(alice.getBlockchainAddress(), 5000);
 
         // Alice -> Bob 转账
         Transaction tx1 = new Transaction(alice.getBlockchainAddress(), bob.getBlockchainAddress(), 2.5f);
