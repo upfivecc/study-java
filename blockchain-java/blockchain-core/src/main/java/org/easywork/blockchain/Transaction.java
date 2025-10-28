@@ -9,7 +9,8 @@ public class Transaction {
     private final String sender;
     private final String recipient;
     private final float value;
-    private String signature; // 🆕 增加签名字段
+    // 🆕 增加签名字段
+    private String signature;
 
     public Transaction(String sender, String recipient, float value) {
         this.sender = sender;
@@ -26,11 +27,6 @@ public class Transaction {
         String data = sender + recipient + value;
         return Wallet.verify(data, signature, publicKey);
     }
-
-    public String getSender() { return sender; }
-    public String getRecipient() { return recipient; }
-    public float getValue() { return value; }
-    public String getSignature() { return signature; }
 
     public void print() {
         System.out.println("Sender: " + sender);

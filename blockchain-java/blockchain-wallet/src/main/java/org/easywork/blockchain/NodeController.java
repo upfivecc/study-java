@@ -1,6 +1,7 @@
 package org.easywork.blockchain;
 
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -19,20 +20,31 @@ public class NodeController {
         this.miner = new Miner(blockchain);
     }
 
-    // 查看全链
+    /**
+     * 查看全链
+     * @return
+     */
     @GetMapping("/chain")
     public List<Block> getChain() {
         return blockchain.getChain();
     }
 
-    // 查看余额
+    /**
+     * 查看余额
+     * @param address
+     * @return
+     */
     @GetMapping("/balance/{address}")
     public Map<String, Object> getBalance(@PathVariable String address) {
         float balance = blockchain.calculateBalance(address);
         return Map.of("address", address, "balance", balance);
     }
 
-    // 添加交易（已签名）
+    /**
+     * 添加交易（已签名）
+     * @param txRequest
+     * @return
+     */
     @PostMapping("/transactions")
     public Map<String, Object> addTransaction(@RequestBody TransactionRequest txRequest) {
         if (!txRequest.validate()) {
@@ -52,14 +64,20 @@ public class NodeController {
         return Map.of("success", added);
     }
 
-    // 挖矿
+    /**
+     * 挖矿
+     * @return
+     */
     @GetMapping("/mine")
     public Map<String, Object> mine() {
         blockchain.mine();
         return Map.of("status", "mined", "miner_address", minerWallet.getBlockchainAddress());
     }
 
-    // 查看节点信息
+    /**
+     * 查看节点信息
+     * @return
+     */
     @GetMapping("/node_info")
     public Map<String, Object> nodeInfo() {
         return Map.of(

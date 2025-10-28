@@ -10,9 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class WalletServer {
+
     public static void main(String[] args) {
-        String port = args[0];
-        String gateway = args[1];
         SpringApplication.run(WalletServer.class, args);
     }
 }
