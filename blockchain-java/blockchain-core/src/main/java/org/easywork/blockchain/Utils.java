@@ -1,5 +1,7 @@
 package org.easywork.blockchain;
 
+import cn.hutool.core.net.NetUtil;
+
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -8,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,11 +88,33 @@ public class Utils {
     }
 
     private static boolean isFoundHost(String guessHost, int port) {
-        try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(guessHost, port), 500);
-            return true;
+//        return NetUtil.isOpen(new InetSocketAddress(guessHost, port), 5000);
+//        try (Socket socket = new Socket()) {
+//            socket.connect(new InetSocketAddress(guessHost, port), 5000);
+//            return true;
+//        } catch (Exception e) {
+//            return false;
+//        }
+        // 构建 nc 命令：-z 只检测端口，-w 超时时间（秒）
+        String command = String.format("nc -z -w %d %s %d", 1, guessHost, port);
+        Process process = null;
+        try {
+            // 执行命令
+            process = Runtime.getRuntime().exec(command);
+            // 等待命令执行完成，超时时间略大于 nc 的超时
+            boolean finished = process.waitFor(500, TimeUnit.MILLISECONDS);
+            if (!finished) {
+                process.destroy(); // 超时未完成，强制终止
+                return false;
+            }
+            // 命令退出码为 0 表示成功
+            return process.exitValue() == 0;
         } catch (Exception e) {
             return false;
+        } finally {
+            if (process != null) {
+                process.destroy(); // 确保进程终止
+            }
         }
     }
 }
