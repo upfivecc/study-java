@@ -47,7 +47,7 @@ public class WalletController {
      * @param txRequest
      * @return
      */
-    @GetMapping("/transaction")
+    @PostMapping("/transaction")
     public Map<String, Object> transaction(@RequestBody TransactionRequest txRequest) {
         return blockchain.addTransaction(txRequest);
     }

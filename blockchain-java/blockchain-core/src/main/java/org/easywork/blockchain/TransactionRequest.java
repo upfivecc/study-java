@@ -14,7 +14,7 @@ public class TransactionRequest {
         return senderBlockchainAddress != null &&
                recipientBlockchainAddress != null &&
                senderPublicKey != null &&
-               value != null &&
-               signature != null;
+               value != null
+               /*signature != null*/;
     }
 }
