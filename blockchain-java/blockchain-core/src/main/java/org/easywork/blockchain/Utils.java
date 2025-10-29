@@ -6,9 +6,12 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -41,6 +44,24 @@ public class Utils {
             StringBuilder sb = new StringBuilder();
             for (byte b : addressBytes) sb.append(String.format("%02x", b));
             return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static PublicKey generatePublicKey(String publicKeyStr) {
+        try {
+            byte[] publicKeyBase64 = Base64.getDecoder().decode(publicKeyStr);
+            // 1. 将Base64字符串解码为字节数组（对应publicKey.getEncoded()的原始字节）
+            byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyBase64);
+
+            // 2. 使用X509EncodedKeySpec规范（适用于大多数公钥格式，如RSA/EC的公钥）
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+
+            // 3. 通过密钥工厂生成PublicKey对象
+            KeyFactory keyFactory = KeyFactory.getInstance("SHA-256");
+            return keyFactory.generatePublic(keySpec);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -117,4 +138,5 @@ public class Utils {
             }
         }
     }
+
 }

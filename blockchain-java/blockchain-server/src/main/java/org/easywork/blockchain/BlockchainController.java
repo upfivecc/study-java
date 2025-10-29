@@ -3,6 +3,8 @@ package org.easywork.blockchain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.PublicKey;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,8 +51,8 @@ public class BlockchainController {
      * @param txRequest
      * @return
      */
-    @PostMapping("/addTransaction")
-    public Map<String, Object> addTransaction(@RequestBody TransactionRequest txRequest) {
+    @PostMapping("/createTransaction")
+    public Map<String, Object> createTransaction(@RequestBody Blockchain.TransactionRequest txRequest) {
         if (!txRequest.validate()) {
             return Map.of("error", "Invalid transaction data");
         }
@@ -61,10 +63,10 @@ public class BlockchainController {
                 txRequest.getRecipientBlockchainAddress(),
                 txRequest.getValue()
         );
-        tx.signTransaction(minerWallet);
 
-        // 这里只是演示，实际应从公钥反序列化
-        boolean added = blockchain.createTransaction(tx, minerWallet.getPublicKey());
+        PublicKey sendPublicKey = Utils.generatePublicKey(txRequest.getSenderPublicKey());
+        // 添加交易到区块链
+        boolean added = blockchain.createTransaction(tx, sendPublicKey);
         return Map.of("success", added);
     }
 

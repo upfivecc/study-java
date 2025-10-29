@@ -5,6 +5,7 @@ import lombok.Data;
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 import java.util.Base64;
+
 @Data
 public class Wallet {
     private PrivateKey privateKey;
@@ -15,6 +16,12 @@ public class Wallet {
         generateKeyPair();
         blockchainAddress = Utils.generateBlockchainAddress(publicKey);
         print();
+    }
+
+    public Transaction newTransaction(String publicKeyStr, String privateKeyStr, String sender, String recipient, Float value) {
+        Transaction tx = new Transaction(sender, recipient, value);
+        tx.signTransaction(this);
+        return tx;
     }
 
     private void generateKeyPair() {
@@ -57,5 +64,23 @@ public class Wallet {
         System.err.println("Wallet Address: " + blockchainAddress);
         System.err.println("Public Key: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()));
         System.err.println("Private Key: " + Base64.getEncoder().encodeToString(privateKey.getEncoded()));
+    }
+
+    @Data
+    static class TransactionRequest {
+        private String senderBlockchainAddress;
+        private String recipientBlockchainAddress;
+        private String senderPublicKey;
+        private String senderPrivateKey;
+        private Float value;
+
+        public boolean validate() {
+            return senderBlockchainAddress != null &&
+                    recipientBlockchainAddress != null &&
+                    senderPublicKey != null &&
+                    senderPrivateKey != null &&
+                    value != null;
+        }
+
     }
 }

@@ -3,6 +3,7 @@ package org.easywork.blockchain;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.logging.log4j.util.Strings;
 
@@ -42,7 +43,7 @@ public class Blockchain {
     }
 
     public boolean createTransaction(Transaction tx, PublicKey senderPublicKey) {
-        boolean isAdded = addTransaction(tx, senderPublicKey);
+        boolean isAdded = this.addTransaction(tx, senderPublicKey);
         if (isAdded) {
             for (String neighbor : this.neighbors) {
                 String endpoint = String.format("http://%s/blockchain/addTransaction", neighbor);
@@ -71,7 +72,7 @@ public class Blockchain {
             return false;
         }
 
-        float senderBalance = calculateBalance(tx.getSender());
+        float senderBalance = this.calculateBalance(tx.getSender());
         if (senderBalance < tx.getValue()) {
             System.err.println("Insufficient balance");
             return false;
@@ -190,6 +191,26 @@ public class Blockchain {
         this.startSyncNeighbors();
         this.resolveConflicts();
         this.startMining();
+    }
+
+    @Data
+    static class TransactionRequest {
+        private String senderBlockchainAddress;
+        private String recipientBlockchainAddress;
+        private String senderPublicKey;
+        private String senderPrivateKey;
+        private Float value;
+        private String signature;
+
+        public boolean validate() {
+            return senderBlockchainAddress != null &&
+                    recipientBlockchainAddress != null &&
+                    senderPublicKey != null &&
+                    senderPrivateKey != null &&
+                    value != null &&
+                    signature != null;
+        }
+
     }
 
 }

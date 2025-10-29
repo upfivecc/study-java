@@ -18,6 +18,7 @@ import java.util.Map;
 public class WalletController {
 
     private final BlockchainProxy blockchain;
+    private final Wallet wallet = new Wallet();
 
     @RequestMapping("/")
     public String index() {
@@ -32,7 +33,6 @@ public class WalletController {
     @GetMapping("/newWallet")
     @ResponseBody
     public Map<String, Object> newWallet() {
-        Wallet wallet = new Wallet();
         return Map.of("publicKey", Base64.getEncoder().encodeToString(wallet.getPublicKey().getEncoded()), "privateKey"
                 , Base64.getEncoder().encodeToString(wallet.getPrivateKey().getEncoded()), "blockchainAddress", wallet.getBlockchainAddress());
     }
@@ -57,8 +57,24 @@ public class WalletController {
      */
     @PostMapping("/transaction")
     @ResponseBody
-    public Map<String, Object> transaction(@RequestBody TransactionRequest txRequest) {
-        return blockchain.addTransaction(txRequest);
+    public Map<String, Object> transaction(@RequestBody Wallet.TransactionRequest txRequest) {
+        // 确保交易请求包含所有必要信息
+        if (!txRequest.validate()) {
+            return Map.of("error", "Missing required transaction fields");
+        }
+
+        Transaction transaction = wallet.newTransaction(txRequest.getSenderPublicKey(), txRequest.getSenderPrivateKey()
+                , txRequest.getSenderBlockchainAddress(), txRequest.getRecipientBlockchainAddress(), txRequest.getValue());
+
+        Blockchain.TransactionRequest transactionRequest = new Blockchain.TransactionRequest();
+        transactionRequest.setSenderPublicKey(txRequest.getSenderPublicKey());
+        transactionRequest.setSenderPrivateKey(txRequest.getSenderPrivateKey());
+        transactionRequest.setValue(txRequest.getValue());
+        transactionRequest.setSignature(transaction.getSignature());
+        transactionRequest.setSenderBlockchainAddress(txRequest.getSenderBlockchainAddress());
+        transactionRequest.setRecipientBlockchainAddress(txRequest.getRecipientBlockchainAddress());
+
+        return blockchain.createTransaction(transactionRequest);
     }
 
 }

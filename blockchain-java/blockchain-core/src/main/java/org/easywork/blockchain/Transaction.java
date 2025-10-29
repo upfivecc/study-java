@@ -2,6 +2,7 @@ package org.easywork.blockchain;
 
 import lombok.Data;
 
+import java.security.PrivateKey;
 import java.security.PublicKey;
 
 @Data
