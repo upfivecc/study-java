@@ -42,6 +42,19 @@ public class Blockchain {
         System.out.println("Created block: " + block.hash());
     }
 
+    public boolean createTransaction(Transaction tx, PublicKey senderPublicKey) {
+        boolean added = this.addTransaction(tx, senderPublicKey);
+        if (added) {
+            for (String neighbor : this.neighbors) {
+                String endpoint = String.format("http://%s/blockchain/createTransaction", neighbor);
+                String res = HttpUtil.post(endpoint, JSONUtil.toJsonStr(tx));
+                System.out.println("Transaction sync:" + neighbor + ", result: " + res);
+            }
+            return true;
+        }
+        return false;
+    }
+
     public boolean addTransaction(Transaction tx, PublicKey senderPublicKey) {
         if (tx.getSender().equals("BLOCKCHAIN")) {
             transactionPool.add(tx);
@@ -145,6 +158,7 @@ public class Blockchain {
 
     public void resolveConflicts() {
         int maxLength = this.chain.size();
+        List<Block> longestChain = this.chain;
         for (String neighbor : this.neighbors) {
             String endpoint = String.format("http://%s/blockchain/getBlockchain", neighbor);
             String res = HttpUtil.get(endpoint);
@@ -152,9 +166,13 @@ public class Blockchain {
             int size = blockchain.chain.size();
             if (size > maxLength && this.isValidChain(blockchain.chain)) {
                 maxLength = size;
-                this.chain = blockchain.chain;
+                longestChain = blockchain.chain;
             }
         }
+        if (longestChain != null) {
+            this.chain = longestChain;
+        }
+        System.out.println("Resolve conflicts replaced");
     }
 
     public void startMining() {
