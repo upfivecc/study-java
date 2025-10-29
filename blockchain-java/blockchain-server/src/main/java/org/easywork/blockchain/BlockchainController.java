@@ -90,6 +90,11 @@ public class BlockchainController {
         return Map.of("status", "mining", "miner_address", minerWallet.getBlockchainAddress());
     }
 
+    @GetMapping("/consensus")
+    public Map<String, Object> consensus() {
+        this.blockchain.resolveConflicts();
+        return Map.of("status", "success");
+    }
 
     /**
      * 查看节点信息

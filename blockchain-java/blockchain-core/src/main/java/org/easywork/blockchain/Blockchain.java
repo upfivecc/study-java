@@ -115,12 +115,21 @@ public class Blockchain {
         return true;
     }
 
-    public void mine() {
+    public synchronized void mine() {
+//        if (this.transactionPool.isEmpty()) {
+//            return;
+//        }
         // 挖矿奖励
         createTransaction(new Transaction("BLOCKCHAIN", blockchainAddress, MINING_REWARD), null);
         int nonce = proofOfWork();
         createBlock(nonce, lastBlock().hash());
         System.out.println("⛏️ Mining complete!");
+
+        for (String neighbor : this.neighbors) {
+            String endpoint = String.format("http://%s/blockchain/consensus", neighbor);
+            String res = HttpUtil.get(endpoint);
+            System.out.println("Consensus sync:" + neighbor + ", result: " + res);
+        }
     }
 
     public float calculateBalance(String address) {

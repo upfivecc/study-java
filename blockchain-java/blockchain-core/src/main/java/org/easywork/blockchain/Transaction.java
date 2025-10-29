@@ -9,7 +9,7 @@ public class Transaction {
     private final String sender;
     private final String recipient;
     private final float value;
-    // 🆕 增加签名字段
+    // 增加签名字段
     private String signature;
 
     public Transaction(String sender, String recipient, float value) {
