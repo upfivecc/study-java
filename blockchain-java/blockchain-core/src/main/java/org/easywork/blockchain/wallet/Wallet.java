@@ -1,7 +1,7 @@
 package org.easywork.blockchain.wallet;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.easywork.blockchain.block.Transaction;
 import org.easywork.blockchain.utils.Utils;
 
 import java.security.*;
@@ -21,9 +21,7 @@ public class Wallet {
     }
 
     public Transaction newTransaction(String publicKeyStr, String privateKeyStr, String sender, String recipient, Float value) {
-        Transaction tx = new Transaction(sender, recipient, value);
-        tx.signTransaction(this);
-        return tx;
+        return new Transaction(Utils.generatePublicKey(publicKeyStr), Utils.generatePrivateKey(privateKeyStr), sender, recipient, value);
     }
 
     private void generateKeyPair() {
@@ -39,33 +37,25 @@ public class Wallet {
         }
     }
 
-    public String sign(String data) {
-        try {
-            Signature signature = Signature.getInstance("SHA256withECDSA");
-            signature.initSign(privateKey);
-            signature.update(data.getBytes());
-            return Base64.getEncoder().encodeToString(signature.sign());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static boolean verify(String data, String signatureStr, PublicKey publicKey) {
-        try {
-            Signature signature = Signature.getInstance("SHA256withECDSA");
-            signature.initVerify(publicKey);
-            signature.update(data.getBytes());
-            byte[] sigBytes = Base64.getDecoder().decode(signatureStr);
-            return signature.verify(sigBytes);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void print() {
         System.err.println("Wallet Address: " + blockchainAddress);
         System.err.println("Public Key: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()));
         System.err.println("Private Key: " + Base64.getEncoder().encodeToString(privateKey.getEncoded()));
+    }
+
+    @AllArgsConstructor
+    @Data
+    public static class Transaction {
+        private PublicKey senderPublicKey;
+        private PrivateKey senderPrivateKey;
+        private String senderBlockchainAddress;
+        private String recipientBlockchainAddress;
+        private Float value;
+
+        public String generateSignature() {
+            String data = senderBlockchainAddress + recipientBlockchainAddress + value;
+            return Utils.sign(senderPrivateKey, data);
+        }
     }
 
     @Data

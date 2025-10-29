@@ -2,9 +2,7 @@ package org.easywork.blockchain.utils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.KeyFactory;
-import java.security.MessageDigest;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -17,6 +15,31 @@ public class Utils {
 
     private static final Pattern IP_PATTERN = Pattern.compile("((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?\\.){3})(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
     //private static final Pattern IP_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+\\.)(\\d+)");
+
+
+    public static String sign(PrivateKey privateKey, String data) {
+        try {
+            Signature signature = Signature.getInstance("SHA256withECDSA");
+            signature.initSign(privateKey);
+            signature.update(data.getBytes());
+            return Base64.getEncoder().encodeToString(signature.sign());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean verify(String data, String signatureStr, PublicKey publicKey) {
+        try {
+            Signature signature = Signature.getInstance("SHA256withECDSA");
+            signature.initVerify(publicKey);
+            signature.update(data.getBytes());
+            byte[] sigBytes = Base64.getDecoder().decode(signatureStr);
+            return signature.verify(sigBytes);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public static String sha256(String data) {
         try {
@@ -58,6 +81,23 @@ public class Utils {
             // 3. 通过密钥工厂生成PublicKey对象
             KeyFactory keyFactory = KeyFactory.getInstance("SHA-256");
             return keyFactory.generatePublic(keySpec);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static PrivateKey generatePrivateKey(String privateKeyStr) {
+        try {
+            byte[] privateKeyBase64 = Base64.getDecoder().decode(privateKeyStr);
+            // 1. 将Base64字符串解码为字节数组（对应publicKey.getEncoded()的原始字节）
+            byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyBase64);
+
+            // 2. 使用X509EncodedKeySpec规范（适用于大多数公钥格式，如RSA/EC的公钥）
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(privateKeyBytes);
+
+            // 3. 通过密钥工厂生成PublicKey对象
+            KeyFactory keyFactory = KeyFactory.getInstance("SHA-256");
+            return keyFactory.generatePrivate(keySpec);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -2,7 +2,6 @@ package org.easywork.blockchain;
 
 import lombok.RequiredArgsConstructor;
 import org.easywork.blockchain.block.Blockchain;
-import org.easywork.blockchain.block.Transaction;
 import org.easywork.blockchain.wallet.Wallet;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -66,14 +65,16 @@ public class WalletController {
             return Map.of("error", "Missing required transaction fields");
         }
 
-        Transaction transaction = wallet.newTransaction(txRequest.getSenderPublicKey(), txRequest.getSenderPrivateKey()
+        Wallet.Transaction transaction = wallet.newTransaction(txRequest.getSenderPublicKey(), txRequest.getSenderPrivateKey()
                 , txRequest.getSenderBlockchainAddress(), txRequest.getRecipientBlockchainAddress(), txRequest.getValue());
+
+        String signature = transaction.generateSignature();
 
         Blockchain.TransactionRequest transactionRequest = new Blockchain.TransactionRequest();
         transactionRequest.setSenderPublicKey(txRequest.getSenderPublicKey());
         transactionRequest.setSenderPrivateKey(txRequest.getSenderPrivateKey());
         transactionRequest.setValue(txRequest.getValue());
-        transactionRequest.setSignature(transaction.getSignature());
+        transactionRequest.setSignature(signature);
         transactionRequest.setSenderBlockchainAddress(txRequest.getSenderBlockchainAddress());
         transactionRequest.setRecipientBlockchainAddress(txRequest.getRecipientBlockchainAddress());
 

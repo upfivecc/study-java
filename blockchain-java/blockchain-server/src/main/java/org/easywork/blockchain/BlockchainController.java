@@ -67,9 +67,9 @@ public class BlockchainController {
                 txRequest.getValue()
         );
 
-        PublicKey sendPublicKey = Utils.generatePublicKey(txRequest.getSenderPublicKey());
+        PublicKey senderPublicKey = Utils.generatePublicKey(txRequest.getSenderPublicKey());
         // 添加交易到区块链
-        boolean added = blockchain.createTransaction(tx, sendPublicKey);
+        boolean added = blockchain.createTransaction(tx, senderPublicKey);
         return Map.of("success", added);
     }
 

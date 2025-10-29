@@ -1,6 +1,7 @@
 package org.easywork.blockchain.block;
 
 import lombok.Data;
+import org.easywork.blockchain.utils.Utils;
 import org.easywork.blockchain.wallet.Wallet;
 
 import java.security.PublicKey;
@@ -19,14 +20,9 @@ public class Transaction {
         this.value = value;
     }
 
-    public void signTransaction(Wallet wallet) {
-        String data = sender + recipient + value;
-        this.signature = wallet.sign(data);
-    }
-
     public boolean isValid(PublicKey publicKey) {
         String data = sender + recipient + value;
-        return Wallet.verify(data, signature, publicKey);
+        return Utils.verify(data, signature, publicKey);
     }
 
     public void print() {
