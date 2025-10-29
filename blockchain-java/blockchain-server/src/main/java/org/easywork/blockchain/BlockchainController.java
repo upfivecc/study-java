@@ -70,7 +70,7 @@ public class BlockchainController {
 
         PublicKey senderPublicKey = Utils.generatePublicKey(txRequest.getSenderPublicKey());
         // 添加交易到区块链
-        boolean added = blockchain.createTransaction(tx, senderPublicKey);
+        boolean added = blockchain.addTransaction(tx, senderPublicKey);
         return Map.of("success", added);
     }
 
@@ -101,19 +101,5 @@ public class BlockchainController {
         this.blockchain.resolveConflicts();
         return Map.of("status", "success");
     }
-
-    /**
-     * 查看节点信息
-     *
-     * @return
-     */
-    @GetMapping("/nodeInfo")
-    public Map<String, Object> nodeInfo() {
-        return Map.of(
-                "miner_address", minerWallet.getBlockchainAddress(),
-                "chain_length", blockchain.getChain().size()
-        );
-    }
-
 
 }

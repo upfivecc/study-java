@@ -42,25 +42,6 @@ public class Blockchain {
         System.out.println("Created block: " + block.hash());
     }
 
-    public boolean createTransaction(Transaction tx, PublicKey senderPublicKey) {
-        boolean isAdded = this.addTransaction(tx, senderPublicKey);
-        if (isAdded) {
-            for (String neighbor : this.neighbors) {
-                String endpoint = String.format("http://%s/blockchain/addTransaction", neighbor);
-                TransactionRequest txRequest = new TransactionRequest();
-                txRequest.setSenderBlockchainAddress(tx.getSender());
-                txRequest.setRecipientBlockchainAddress(tx.getRecipient());
-                txRequest.setValue(tx.getValue());
-                if (null != senderPublicKey) {
-                    txRequest.setSenderPublicKey(Base64.getEncoder().encodeToString(senderPublicKey.getEncoded()));
-                }
-                String res = HttpUtil.post(endpoint, JSONUtil.toJsonStr(txRequest));
-                System.out.println("Transaction sync:" + neighbor + ", result: " + res);
-            }
-        }
-        return true;
-    }
-
     public boolean addTransaction(Transaction tx, PublicKey senderPublicKey) {
         if (tx.getSender().equals("BLOCKCHAIN")) {
             transactionPool.add(tx);
@@ -121,10 +102,10 @@ public class Blockchain {
 //            return;
 //        }
         // 挖矿奖励
-        createTransaction(new Transaction("BLOCKCHAIN", blockchainAddress, MINING_REWARD, null), null);
-        int nonce = proofOfWork();
+        this.addTransaction(new Transaction("BLOCKCHAIN", blockchainAddress, MINING_REWARD, null), null);
+        int nonce = this.proofOfWork();
         createBlock(nonce, lastBlock().hash());
-        System.out.println("⛏️ Mining complete!");
+        System.out.println("Mining complete!");
 
         for (String neighbor : this.neighbors) {
             String endpoint = String.format("http://%s/blockchain/consensus", neighbor);
@@ -165,7 +146,7 @@ public class Blockchain {
     public void resolveConflicts() {
         int maxLength = this.chain.size();
         for (String neighbor : this.neighbors) {
-            String endpoint = String.format("http://%s/chain", neighbor);
+            String endpoint = String.format("http://%s/blockchain/getBlockchain", neighbor);
             String res = HttpUtil.get(endpoint);
             Blockchain blockchain = JSONUtil.toBean(res, Blockchain.class);
             int size = blockchain.chain.size();
