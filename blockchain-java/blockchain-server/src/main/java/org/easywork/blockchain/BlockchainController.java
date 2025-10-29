@@ -64,7 +64,8 @@ public class BlockchainController {
         Transaction tx = new Transaction(
                 txRequest.getSenderBlockchainAddress(),
                 txRequest.getRecipientBlockchainAddress(),
-                txRequest.getValue()
+                txRequest.getValue(),
+                txRequest.getSignature()
         );
 
         PublicKey senderPublicKey = Utils.generatePublicKey(txRequest.getSenderPublicKey());

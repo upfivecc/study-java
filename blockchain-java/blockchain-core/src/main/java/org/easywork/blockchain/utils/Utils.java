@@ -3,6 +3,7 @@ package org.easywork.blockchain.utils;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.*;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -73,13 +74,13 @@ public class Utils {
         try {
             byte[] publicKeyBase64 = Base64.getDecoder().decode(publicKeyStr);
             // 1. 将Base64字符串解码为字节数组（对应publicKey.getEncoded()的原始字节）
-            byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyBase64);
+            //byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyBase64);
 
             // 2. 使用X509EncodedKeySpec规范（适用于大多数公钥格式，如RSA/EC的公钥）
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBase64);
 
             // 3. 通过密钥工厂生成PublicKey对象
-            KeyFactory keyFactory = KeyFactory.getInstance("SHA-256");
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
             return keyFactory.generatePublic(keySpec);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -90,13 +91,13 @@ public class Utils {
         try {
             byte[] privateKeyBase64 = Base64.getDecoder().decode(privateKeyStr);
             // 1. 将Base64字符串解码为字节数组（对应publicKey.getEncoded()的原始字节）
-            byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyBase64);
+            //byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyBase64);
 
             // 2. 使用X509EncodedKeySpec规范（适用于大多数公钥格式，如RSA/EC的公钥）
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(privateKeyBytes);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBase64);
 
             // 3. 通过密钥工厂生成PublicKey对象
-            KeyFactory keyFactory = KeyFactory.getInstance("SHA-256");
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
             return keyFactory.generatePrivate(keySpec);
         } catch (Exception e) {
             throw new RuntimeException(e);

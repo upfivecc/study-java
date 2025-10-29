@@ -121,7 +121,7 @@ public class Blockchain {
 //            return;
 //        }
         // 挖矿奖励
-        createTransaction(new Transaction("BLOCKCHAIN", blockchainAddress, MINING_REWARD), null);
+        createTransaction(new Transaction("BLOCKCHAIN", blockchainAddress, MINING_REWARD, null), null);
         int nonce = proofOfWork();
         createBlock(nonce, lastBlock().hash());
         System.out.println("⛏️ Mining complete!");
@@ -183,7 +183,7 @@ public class Blockchain {
             public void run() {
                 mine();
             }
-        }, 0, 20_000);
+        }, 0, 60_000);
     }
 
     @PostConstruct

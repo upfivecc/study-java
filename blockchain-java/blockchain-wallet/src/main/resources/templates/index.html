@@ -7,8 +7,8 @@
     <script>
          $(function () {
              $.ajax({
-                 url: '/wallet/newWallet',
-                 type: 'POST',
+                 url: '/wallet/myWallet',
+                 type: 'GET',
                  success: function (response) {
                      $('#public_key').val(response['publicKey']);
                      $('#private_key').val(response['privateKey']);
@@ -43,7 +43,7 @@
                      data: JSON.stringify(transaction_data),
                      success: function (response) {
                          console.info(response);
-                         if (response.message == 'fail') {
+                         if (!response.success) {
                              alert('Send fail')
                          } else {
                              alert('Send success');
@@ -57,13 +57,13 @@
              });
 
              function reload_amount() {
-                 let data = {'blockchain_address': $('#blockchain_address').val()}
+                 let data = {'blockchainAddress': $('#blockchain_address').val()}
                  $.ajax({
-                     url: '/wallet/amount',
+                     url: '/wallet/balance',
                      type: 'GET',
                      data: data,
                      success: function (response) {
-                         let amount = response['amount'];
+                         let amount = response['balance'];
                          $('#wallet_amount').text(amount);
                          console.info(amount)
                      },

@@ -32,9 +32,9 @@ public class WalletController {
      *
      * @return
      */
-    @GetMapping("/newWallet")
+    @GetMapping("/myWallet")
     @ResponseBody
-    public Map<String, Object> newWallet() {
+    public Map<String, Object> myWallet() {
         return Map.of("publicKey", Base64.getEncoder().encodeToString(wallet.getPublicKey().getEncoded()), "privateKey"
                 , Base64.getEncoder().encodeToString(wallet.getPrivateKey().getEncoded()), "blockchainAddress", wallet.getBlockchainAddress());
     }
@@ -45,9 +45,9 @@ public class WalletController {
      * @param address
      * @return
      */
-    @GetMapping("/balance/{address}")
+    @GetMapping("/balance")
     @ResponseBody
-    public Map<String, Object> getBalance(@PathVariable(name = "address") String address) {
+    public Map<String, Object> getBalance(@RequestParam(name = "blockchainAddress") String address) {
         return blockchain.calculateBalance(address);
     }
 

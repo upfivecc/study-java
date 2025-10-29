@@ -14,10 +14,11 @@ public class Transaction {
     // 增加签名字段
     private String signature;
 
-    public Transaction(String sender, String recipient, float value) {
+    public Transaction(String sender, String recipient, float value, String signature) {
         this.sender = sender;
         this.recipient = recipient;
         this.value = value;
+        this.signature = signature;
     }
 
     public boolean isValid(PublicKey publicKey) {
