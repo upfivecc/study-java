@@ -1,6 +1,7 @@
 package org.easywork.blockchain;
 
 import jakarta.annotation.Resource;
+import org.easywork.blockchain.block.Blockchain;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

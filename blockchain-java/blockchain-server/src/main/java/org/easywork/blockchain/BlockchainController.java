@@ -1,6 +1,9 @@
 package org.easywork.blockchain;
 
 import lombok.RequiredArgsConstructor;
+import org.easywork.blockchain.block.Blockchain;
+import org.easywork.blockchain.block.Transaction;
+import org.easywork.blockchain.utils.Utils;
 import org.easywork.blockchain.wallet.Wallet;
 import org.springframework.web.bind.annotation.*;
 

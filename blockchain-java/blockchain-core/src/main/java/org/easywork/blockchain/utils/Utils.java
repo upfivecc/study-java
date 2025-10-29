@@ -1,10 +1,6 @@
-package org.easywork.blockchain;
-
-import cn.hutool.core.net.NetUtil;
+package org.easywork.blockchain.utils;
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyFactory;
 import java.security.MessageDigest;

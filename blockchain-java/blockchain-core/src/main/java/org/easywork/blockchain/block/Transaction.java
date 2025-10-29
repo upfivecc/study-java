@@ -1,4 +1,4 @@
-package org.easywork.blockchain;
+package org.easywork.blockchain.block;
 
 import lombok.Data;
 import org.easywork.blockchain.wallet.Wallet;

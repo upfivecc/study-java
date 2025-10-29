@@ -1,11 +1,11 @@
-package org.easywork.blockchain;
+package org.easywork.blockchain.block;
 
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.logging.log4j.util.Strings;
+import org.easywork.blockchain.utils.Utils;
 
 import java.security.PublicKey;
 import java.util.*;
@@ -194,7 +194,7 @@ public class Blockchain {
     }
 
     @Data
-    static class TransactionRequest {
+    public static class TransactionRequest {
         private String senderBlockchainAddress;
         private String recipientBlockchainAddress;
         private String senderPublicKey;

@@ -1,8 +1,8 @@
 package org.easywork.blockchain.wallet;
 
 import lombok.Data;
-import org.easywork.blockchain.Transaction;
-import org.easywork.blockchain.Utils;
+import org.easywork.blockchain.block.Transaction;
+import org.easywork.blockchain.utils.Utils;
 
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
@@ -69,7 +69,7 @@ public class Wallet {
     }
 
     @Data
-    static class TransactionRequest {
+    public static class TransactionRequest {
         private String senderBlockchainAddress;
         private String recipientBlockchainAddress;
         private String senderPublicKey;
