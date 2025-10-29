@@ -1,6 +1,8 @@
-package org.easywork.blockchain;
+package org.easywork.blockchain.wallet;
 
 import lombok.Data;
+import org.easywork.blockchain.Transaction;
+import org.easywork.blockchain.Utils;
 
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;

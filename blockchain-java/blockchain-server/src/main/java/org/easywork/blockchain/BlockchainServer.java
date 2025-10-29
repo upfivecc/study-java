@@ -1,5 +1,6 @@
 package org.easywork.blockchain;
 
+import org.easywork.blockchain.wallet.Wallet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

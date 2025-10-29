@@ -1,8 +1,8 @@
 package org.easywork.blockchain;
 
 import lombok.Data;
+import org.easywork.blockchain.wallet.Wallet;
 
-import java.security.PrivateKey;
 import java.security.PublicKey;
 
 @Data

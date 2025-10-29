@@ -2,7 +2,7 @@ package org.easywork;
 
 import org.easywork.blockchain.Blockchain;
 import org.easywork.blockchain.Transaction;
-import org.easywork.blockchain.Wallet;
+import org.easywork.blockchain.wallet.Wallet;
 
 public class BlockChainServer {
     public static void main(String[] args) {

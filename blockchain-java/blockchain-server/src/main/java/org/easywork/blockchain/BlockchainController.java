@@ -1,10 +1,10 @@
 package org.easywork.blockchain;
 
 import lombok.RequiredArgsConstructor;
+import org.easywork.blockchain.wallet.Wallet;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.PublicKey;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
