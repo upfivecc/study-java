@@ -159,20 +159,41 @@ public class Blockchain {
     public void resolveConflicts() {
         int maxLength = this.chain.size();
         List<Block> longestChain = this.chain;
+        boolean chainReplaced = false;
+        
         for (String neighbor : this.neighbors) {
             String endpoint = String.format("http://%s/blockchain/getBlockchain", neighbor);
             String res = HttpUtil.get(endpoint);
             Blockchain blockchain = JSONUtil.toBean(res, Blockchain.class);
             int size = blockchain.chain.size();
+            
+            // 如果找到更长的有效链，则替换
             if (size > maxLength && this.isValidChain(blockchain.chain)) {
                 maxLength = size;
                 longestChain = blockchain.chain;
+                chainReplaced = true;
+            }
+            // 如果找到相同长度但内容不同的有效链，根据区块链共识规则选择其中一个
+            // 这里我们采用“第一个遇到的有效链”策略
+            else if (size == maxLength && this.isValidChain(blockchain.chain)) {
+                // 检查链内容是否不同
+                if (!this.chain.equals(blockchain.chain) && !chainReplaced) {
+                    // 在实际的区块链实现中，这里可能会有更复杂的决策逻辑
+                    // 例如比较链的总工作量或其他指标
+                    // 当前实现简单地选择第一个遇到的不同有效链
+                    longestChain = blockchain.chain;
+                    chainReplaced = true;
+                    System.out.println("Found conflicting chain of same length, replacing with neighbor's chain");
+                }
             }
         }
-        if (longestChain != null) {
+        
+        if (longestChain != null && chainReplaced) {
             this.chain = longestChain;
+            System.out.println("Resolve conflicts replaced");
+        } else {
+            System.out.println("No conflicts to resolve or chain not replaced");
         }
-        System.out.println("Resolve conflicts replaced");
     }
 
     public void startMining() {
